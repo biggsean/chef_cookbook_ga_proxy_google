@@ -1,12 +1,5 @@
 require 'spec_helper'
-
-describe 'ga_proxy_google::default' do
-  # Serverspec examples can be found at
-  # http://serverspec.org/resource_types.html
-  it 'does something' do
-    skip 'Replace this with meaningful tests'
-  end
-end
+require 'ha_proxy_stat'
 
 describe command('cat /etc/centos-release') do
   its(:stdout) { should match(/\s6\.7/) }
@@ -27,4 +20,10 @@ end
 
 describe port(80) do
   it { should be_listening }
+end
+
+describe ha_proxy_stat('google') do
+  its(:check_status) { should match(/^L7/) }
+  its(:check_code) { should eq 200 }
+  its(:status) { should eq 'UP' }
 end
