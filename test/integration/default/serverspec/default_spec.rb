@@ -19,11 +19,21 @@ describe command('haproxy -v') do
 end
 
 describe port(80) do
-  it { should be_listening }
+  it { should be_listening.with('tcp') }
 end
 
 describe ha_proxy_stat('google') do
   its(:check_status) { should match(/^L7/) }
   its(:check_code) { should eq 200 }
   its(:status) { should eq 'UP' }
+end
+
+describe command('curl -isfm 3 172.16.100.100') do
+  its(:stdout) { should match(%r{^HTTP/1\.1 200 OK}) }
+  its(:stdout) { should match(%r{<title>Google</title>}) }
+end
+
+describe command('curl -isfm 3 "172.16.100.100/search?q=site%3Awikipedia.org+foo+bar&hl=en"') do
+  its(:stdout) { should match(%r{^HTTP/1\.1 200 OK}) }
+  its(:stdout) { should match(%r{<title>site:wikipedia\.org foo bar - Google Search</title>}) }
 end
