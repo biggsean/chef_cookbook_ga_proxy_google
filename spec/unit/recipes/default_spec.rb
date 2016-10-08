@@ -7,10 +7,12 @@
 require 'spec_helper'
 
 describe 'ga_proxy_google::default' do
-  context 'When all attributes are default, on an unspecified platform' do
+  context 'When attributes are defined, on CentOS 6.7' do
     let(:chef_run) do
-      runner = ChefSpec::ServerRunner.new(platform: 'centos', version: '6.7')
-      runner.converge(described_recipe)
+      ChefSpec::ServerRunner.new(platform: 'centos', version: '6.7') do |node|
+        node.normal['haproxy']['frontends'] = {}
+        node.normal['haproxy']['backends'] = {}
+      end.converge(described_recipe)
     end
 
     it 'converges successfully' do
@@ -18,7 +20,30 @@ describe 'ga_proxy_google::default' do
     end
 
     it 'creates haproxy service' do
-      expect(chef_run).to create_ga_haproxy('default')
+      expect(chef_run).to create_ga_haproxy('default').with(
+        frontends: {
+          'main' => {
+            'ip' => '*',
+            'port' => 80,
+            'default_backend' => 'google'
+          }
+        },
+        backends: {
+          'google' => {
+            'servers' => [
+              'google1' => {
+                'socket' => 'www.google.com:80',
+                'options' => ['check']
+              }
+            ],
+            'options' => [
+              'option  httpchk  HEAD / HTTP/1.1\r\nHost:\ www.google.com',
+              'http-request set-header Host www.google.com',
+              'http-request set-header User-Agent GoogleProxy'
+            ]
+          }
+        }
+      )
     end
   end
 end
