@@ -22,7 +22,7 @@ describe port(80) do
   it { should be_listening.with('tcp') }
 end
 
-describe ha_proxy_stat('google') do
+describe ha_proxy_stat('google1') do
   its(:check_status) { should match(/^L7/) }
   its(:check_code) { should eq 200 }
   its(:status) { should eq 'UP' }
