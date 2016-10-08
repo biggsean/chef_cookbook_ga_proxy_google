@@ -1,5 +1,5 @@
 name 'ga_proxy_google'
-maintainer 'The Authors'
+maintainer 'Sean McGowan'
 maintainer_email 'you@example.com'
 license 'all_rights'
 description 'Installs/Configures ga_proxy_google'
