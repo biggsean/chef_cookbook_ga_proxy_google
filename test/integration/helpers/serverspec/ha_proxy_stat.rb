@@ -4,8 +4,9 @@ require 'socket'
 module Serverspec
   module Type
     class HAProxyStat < Base
-      def initialize(backend)
-        @backend = backend
+      def initialize(backend_id, socket = '/var/lib/haproxy/stats')
+        @backend_id = backend_id
+        @socket = socket
         @info = stat_info
       end
 
@@ -24,7 +25,7 @@ module Serverspec
       private
 
       def stat_info
-        socket = UNIXSocket.new('/var/lib/haproxy/stats')
+        socket = UNIXSocket.new(@socket)
         socket.puts 'show stat'
         csv = CSV.new(socket.read.sub(/\s*^\#\s+/, ''), headers: true)
         data = {}
@@ -33,12 +34,12 @@ module Serverspec
           h = row.to_hash
           data[h['svname']] = h
         end
-        data[@backend] || {}
+        data[@backend_id] || {}
       end
     end
 
-    def ha_proxy_stat(backend)
-      HAProxyStat.new(backend)
+    def ha_proxy_stat(backend_id)
+      HAProxyStat.new(backend_id)
     end
   end
 end
