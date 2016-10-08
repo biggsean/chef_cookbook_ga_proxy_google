@@ -9,10 +9,7 @@ require 'spec_helper'
 describe 'ga_proxy_google::default' do
   context 'When attributes are defined, on CentOS 6.7' do
     let(:chef_run) do
-      ChefSpec::ServerRunner.new(platform: 'centos', version: '6.7') do |node|
-        node.normal['haproxy']['frontends'] = {}
-        node.normal['haproxy']['backends'] = {}
-      end.converge(described_recipe)
+      ChefSpec::ServerRunner.new(platform: 'centos', version: '6.7').converge(described_recipe)
     end
 
     it 'converges successfully' do
