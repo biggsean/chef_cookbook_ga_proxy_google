@@ -1,4 +1,10 @@
-# ga_proxy_google
+Cookbook Name ga_proxy_google
+=========
 
-TODO: Enter the cookbook description here.
+Install and configure haproxy to proxy www.google.com on Centos 6/7
+
+Requirements
+------------
+
+Tested on chef 12.5.1
 
