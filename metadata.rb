@@ -4,6 +4,6 @@ maintainer_email 'spmcgowan@gmail.com'
 license 'all_rights'
 description 'Installs/Configures ga_proxy_google'
 long_description 'Installs/Configures ga_proxy_google'
-version '0.1.1'
+version '0.1.2'
 
 depends 'ga_haproxy'
