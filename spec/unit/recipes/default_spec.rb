@@ -27,9 +27,13 @@ describe 'ga_proxy_google::default' do
       )
     end
     it 'creates haproxy backend' do
-      expect(chef_run).to enable_ga_haproxy_frontend('google').with(
+      expect(chef_run).to enable_ga_haproxy_backend('google').with(
         instance_name: 'default',
-        servers: [{ name: 'google1', socket: 'www.google.com:80', options: ['check'] }],
+        servers: [{
+          'name' => 'google1',
+          'socket' => 'www.google.com:80',
+          'options' => ['check']
+        }],
         options: [
           'option  httpchk  HEAD / HTTP/1.1\r\nHost:\ www.google.com',
           'http-request set-header Host www.google.com',
