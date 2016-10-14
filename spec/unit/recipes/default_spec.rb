@@ -17,29 +17,24 @@ describe 'ga_proxy_google::default' do
     end
 
     it 'creates haproxy service' do
-      expect(chef_run).to create_ga_haproxy('default').with(
-        frontends: {
-          'main' => {
-            'ip' => '*',
-            'port' => 80,
-            'default_backend' => 'google'
-          }
-        },
-        backends: {
-          'google' => {
-            'servers' => [
-              'google1' => {
-                'socket' => 'www.google.com:80',
-                'options' => ['check']
-              }
-            ],
-            'options' => [
-              'option  httpchk  HEAD / HTTP/1.1\r\nHost:\ www.google.com',
-              'http-request set-header Host www.google.com',
-              'http-request set-header User-Agent GoogleProxy'
-            ]
-          }
-        }
+      expect(chef_run).to create_ga_haproxy('default')
+    end
+    it 'creates haproxy frontend' do
+      expect(chef_run).to enable_ga_haproxy_frontend('main').with(
+        instance_name: 'default',
+        socket: '*:80',
+        default_backend: 'google'
+      )
+    end
+    it 'creates haproxy backend' do
+      expect(chef_run).to enable_ga_haproxy_frontend('google').with(
+        instance_name: 'default',
+        servers: [{ name: 'google1', socket: 'www.google.com:80', options: ['check'] }],
+        options: [
+          'option  httpchk  HEAD / HTTP/1.1\r\nHost:\ www.google.com',
+          'http-request set-header Host www.google.com',
+          'http-request set-header User-Agent GoogleProxy'
+        ]
       )
     end
   end
